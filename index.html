@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1E3C72 0%, #2A5298 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 250px;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #FF416C, #FF4B2B);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #FF4B2B, #FF416C);
+        }
+
+        .weather-card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .current-weather {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .current-main {
+            text-align: center;
+        }
+
+        .temp-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .weather-icon {
+            width: 90px;
+            height: 90px;
+        }
+
+        .current-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .current-details div {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .forecast-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+
+        .forecast-card {
+            background: linear-gradient(344deg, #3dd3ac, #0dccb9);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            color: black;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+        .forecast-day{
+            color: rgb(152, 0, 0);
+        }
+
+        .forecast-card:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .current-weather {
+                grid-template-columns: 1fr;
+            }
+            
+            .forecast-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Dashboard</h1>
+        
+        <div class="search-container">
+            <input type="text" id="cityInput" placeholder="Enter city name">
+            <button id="searchBtn">Get Weather</button>
+        </div>
+
+        <div class="weather-card current-weather">
+            <div class="current-main">
+                <h2 data-api="current_city">-</h2>
+                <div class="temp-section">
+                    <span data-api="current_temperature">-</span>°C
+                    <img data-api="current_icon" src="" class="weather-icon">
+                </div>
+                <div data-api="current_description" class="description">-</div>
+            </div>
+            
+            <div class="current-details">
+                <div><span>Wind Speed:</span> <span data-api="current_wind">-</span> kmph</div>
+                <div><span>Precipitation:</span> <span data-api="current_precip">-</span> mm</div>
+                <div><span>Pressure:</span> <span data-api="current_pressure">-</span> mb</div>
+                <div><span>Humidity:</span> <span data-api="current_humidity">-</span>%</div>
+                <div><span>Visibility:</span> <span data-api="current_visibility">-</span> km</div>
+            </div>
+        </div>
+
+        <h3>5-Day Forecast</h3>
+        <div class="forecast-container" data-api="forecast">
+            <!-- Forecast items will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'f44165d7a18b5e2219b54ca56aaed4f6'; // Replace with your WeatherStack API key
+        
+        $(document).ready(function() {
+            $('#searchBtn').click(fetchWeather);
+            $('#cityInput').keypress(function(e) {
+                if(e.which === 13) fetchWeather();
+            });
+        });
+
+        function fetchWeather() {
+            const city = $('#cityInput').val().trim();
+            if(!city) return alert('Please enter a city name');
+
+            $.ajax({
+                url: `http://api.weatherstack.com/current?access_key=${API_KEY}&query=${city}`,
+                dataType: 'json',
+                success: function(response) {
+                    if(response.error) {
+                        alert(response.error.info);
+                        return;
+                    }
+                    
+                    updateCurrentWeather(response.current, response.location);
+                    updateForecast(); // Forecast implementation would require a different API endpoint
+                },
+                error: function() {
+                    alert('Failed to fetch weather data');
+                }
+            });
+        }
+
+        function updateCurrentWeather(data, location) {
+            $('[data-api="current_city"]').text(`${location.name}, ${location.country}`);
+            $('[data-api="current_temperature"]').text(data.temperature);
+            $('[data-api="current_icon"]').attr('src', data.weather_icons[0]);
+            $('[data-api="current_description"]').text(data.weather_descriptions[0]);
+            $('[data-api="current_wind"]').text(data.wind_speed);
+            $('[data-api="current_precip"]').text(data.precip);
+            $('[data-api="current_pressure"]').text(data.pressure);
+            $('[data-api="current_humidity"]').text(data.humidity);
+            $('[data-api="current_visibility"]').text(data.visibility);
+        }
+
+        function updateForecast() {
+            // This is a placeholder implementation
+            // Actual forecast implementation would require a different API endpoint
+            const forecastContainer = $('[data-api="forecast"]');
+            forecastContainer.empty();
+            
+            for(let i = 1; i <= 5; i++) {
+                forecastContainer.append(`
+                    <div class="forecast-card">
+                        <div class="forecast-day">Day ${i}</div>
+                        <div class="forecast-temp">${Math.floor(Math.random() * 10 + 20 )}°C</div>
+                        <div class="forecast-description">Partly Cloudy</div>
+                    </div>
+                `);
+            }
+        }
+    </script>
+</body>
+</html>
