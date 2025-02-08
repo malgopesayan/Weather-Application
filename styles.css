@@ -1,0 +1,127 @@
+/* */
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1E3C72 0%, #2A5298 100%);
+    min-height: 100vh;
+    color: white;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    width: 250px;
+    text-align: center;
+}
+
+button {
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #FF416C, #FF4B2B);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #FF4B2B, #FF416C);
+}
+
+.weather-card {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.current-weather {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.current-main {
+    text-align: center;
+}
+
+.temp-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.weather-icon {
+    width: 90px;
+    height: 90px;
+}
+
+.current-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.current-details div {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.forecast-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+}
+
+.forecast-card {
+    background: linear-gradient(344deg, #3dd3ac, #0dccb9);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s;
+}
+
+.forecast-day{
+    color: rgb(152, 0, 0);
+}
+
+.forecast-card:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .current-weather {
+        grid-template-columns: 1fr;
+    }
+    
+    .forecast-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
