@@ -1,4 +1,4 @@
-const API_KEY = 'f44165d7a18b5e2219b54ca56aaed4f6'; // Replace with your WeatherStack API key
+const API_KEY = 'Replace_with_your_WeatherStack_API_key'; 
 
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('searchBtn').addEventListener('click', fetchWeather);
